@@ -4,59 +4,41 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.settings import api_settings
 from django.contrib.auth.models import update_last_login
 from django.contrib.auth import get_user_model
-
+from rest_framework_simplejwt.tokens import AccessToken
 
 User = get_user_model()
 
 class RegisterationSerializer(serializers.Serializer):
-    firstname = serializers.CharField()
-    lastname = serializers.CharField()
+    username = serializers.CharField(max_length=150)
     email = serializers.EmailField()
-    password = serializers.CharField(write_only=True, style={'input_type': 'password'})
-
+    password1 = serializers.CharField(write_only=True, style={'input_type': 'password'})
 
     def validate(self, data):
-
         form = UserForm({
             "username": data.get("username"),
             "email": data.get("email"),
-            "password": data.get("password"),
+            "password1": data.get("password"),
         })
-
         if not form.is_valid():
-            
-            error_messages = []
-            for field, errors in form.errors.items():
-                if field == 'email':
-                    error_messages.append("Email is already in use.")
-                elif field == 'password':
-                    error_messages.append("Password is too weak. It must contain at least 8 characters, including a number.")
-                else:    
-                    error_messages.append(errors[0])
-            combined_error_message = ' and '.join(error_messages)
+            raise serializers.ValidationError(form.errors)
 
-            raise serializers.ValidationError({
-                "error": combined_error_message
-            })
-        
+
         return data
 
     def create(self, validated_data):
         user = User.objects.create_user(
-            username=f"{validated_data['firstname']}-{validated_data['lastname']}",
-            firstname=validated_data['firstname'],
-            lastname=validated_data['lastname'],
+            username=validated_data['username'],
             email=validated_data['email'],
-            password=validated_data['password'],
-            role=self.role
+            password=validated_data['password1'],
         )
 
-        from rest_framework_simplejwt.tokens import AccessToken
+        # Generate JWT access token
         access = AccessToken.for_user(user)
 
         return {
-            "message": "Registration successful.",
-            "access": str(access)
+            "username": validated_data['username'],
+            "email": validated_data['email'],
+            "token": str(access)
         }
 
 
@@ -72,8 +54,7 @@ class LoginSerializer(TokenObtainPairSerializer):
 
         if user and user.check_password(password):
             access = self.get_token(user).access_token
-            data['access'] = str(access)
-            data['message'] ="Login successful."
+            data['token'] = str(access)
             
             if api_settings.UPDATE_LAST_LOGIN:
                 update_last_login(None, user)
