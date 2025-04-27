@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -41,6 +42,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'user.apps.UserConfig',
     'switch.apps.SwitchConfig',
+    'django_celery_beat',
 ]
 
 MIDDLEWARE = [
@@ -109,9 +111,9 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "Africa/lagos"
 
-USE_I18N = True
+USE_I18N = False
 
 USE_TZ = True
 
@@ -134,3 +136,12 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.BasicAuthentication',
     ],
 }
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=3),
+}
+
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_TIMEZONE = 'Africa/lagos'
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'

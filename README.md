@@ -164,7 +164,7 @@ celery -A deadman_switch worker -B --loglevel=info
 
 ### 📝 Update a Switch  
 **URL:** `/api/switches/{id}/`  
-**Method:** `PUT`
+**Method:** `PATCH`
 
 ---
 
@@ -205,7 +205,7 @@ celery -A deadman_switch worker -B --loglevel=info
 
 ---
 
-### 🧪 Optional: Test a Webhook  
+### 🧪 Test a Webhook  
 **URL:** `/api/webhook-test/`  
 **Method:** `POST`  
 **Request Body:**
@@ -240,7 +240,8 @@ A periodic background task runs every hour/day to:
 - Check switches whose `last_checkin + inactivity_duration_days < now`
 - Trigger their assigned action
 - Mark the switch as `triggered`
-
+- run via `celery -A dms.celery_app worker --loglevel=info`
+- run beat via `celery -A dms.celery_app beat --loglevel=info`
 ---
 
 ## 🛡️ Permissions

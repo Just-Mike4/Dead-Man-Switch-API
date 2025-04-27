@@ -18,13 +18,19 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from user.views import RegisterationViewSet, LoginViewSet
+from switch.views import SwitchViewSet, ActionViewSet, webhook_test,UserStatusView
 
 router= DefaultRouter()
 
-router.register("register", RegisterationViewSet, basename="register")
-router.register("login", LoginViewSet, basename="login")
+router.register(r"register", RegisterationViewSet, basename="register")
+router.register(r"login", LoginViewSet, basename="login")
+router.register(r'switches', SwitchViewSet, basename='switch')
+router.register(r'actions', ActionViewSet, basename='action')
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include(router.urls)),
+    path('api/webhook-test/', webhook_test),
+    path('api/my-status/', UserStatusView.as_view()),
+    
 ]
