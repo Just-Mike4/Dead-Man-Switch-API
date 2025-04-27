@@ -64,7 +64,8 @@ Set up Redis and Celery:
 redis-server
 
 # In another terminal, start Celery worker
-celery -A deadman_switch worker -B --loglevel=info
+celery -A dms.celery_app worker --loglevel=info
+celery -A dms.celery_app beat --loglevel=info
 ```
 
 ---
@@ -240,8 +241,7 @@ A periodic background task runs every hour/day to:
 - Check switches whose `last_checkin + inactivity_duration_days < now`
 - Trigger their assigned action
 - Mark the switch as `triggered`
-- run via `celery -A dms.celery_app worker --loglevel=info`
-- run beat via `celery -A dms.celery_app beat --loglevel=info`
+
 ---
 
 ## 🛡️ Permissions
