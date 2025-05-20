@@ -9,7 +9,7 @@ This app uses:
 - **Celery + Redis** for scheduled checks
 - **Token Authentication** for secure access
 
----
+
 
 ## Features
 
@@ -21,7 +21,7 @@ This app uses:
 - Status summaries  
 - Celery task for hourly/daily checks  
 
----
+
 
 ## Installation
 
@@ -68,7 +68,7 @@ celery -A dms.celery_app worker --loglevel=info
 celery -A dms.celery_app beat --loglevel=info
 ```
 
----
+
 
 ## API Endpoints  
 > **Note:** All endpoints require authentication via Token unless otherwise stated.
@@ -93,7 +93,7 @@ celery -A dms.celery_app beat --loglevel=info
 }
 ```
 
----
+
 
 ### User Login  
 **URL:** `/api/login/`  
@@ -112,7 +112,42 @@ celery -A dms.celery_app beat --loglevel=info
 }
 ```
 
----
+
+### Request Password Reset
+
+- **URL:** `/api/password-reset/`
+- **Method:** `POST`
+- **Description:** Request a password reset.
+- **Request Body:**
+    ```json
+    {
+        "email": "user@example.com"
+    }
+    ```
+- **Response:**
+    ```json
+    {
+        "message": "Password reset link sent"
+    }
+    ```
+
+### Confirm Password Reset
+
+- **URL:** `/api/password-reset-confirm/<uid>/<token>/`
+- **Method:** `POST`
+- **Description:** Confirm password reset.
+- **Request Body:**
+    ```json
+    {
+        "new_password": "NewSecurePassword123"
+    }
+    ```
+- **Response:**
+    ```json
+    {
+        "message": "Password has been reset"
+    }
+    ```
 
 ### Create a Dead Man’s Switch  
 **URL:** `/api/switches/`  
@@ -137,7 +172,7 @@ celery -A dms.celery_app beat --loglevel=info
 }
 ```
 
----
+
 
 ### List Switches  
 **URL:** `/api/switches/`  
@@ -155,25 +190,25 @@ celery -A dms.celery_app beat --loglevel=info
 ]
 ```
 
----
+
 
 ### Retrieve a Switch  
 **URL:** `/api/switches/{id}/`  
 **Method:** `GET`
 
----
+
 
 ### Update a Switch  
 **URL:** `/api/switches/{id}/`  
 **Method:** `PATCH`
 
----
+
 
 ### Delete a Switch  
 **URL:** `/api/switches/{id}/`  
 **Method:** `DELETE`
 
----
+
 
 ### Check-In to Reset Timer  
 **URL:** `/api/switches/{id}/checkin/`  
@@ -185,7 +220,7 @@ celery -A dms.celery_app beat --loglevel=info
 }
 ```
 
----
+
 
 ### List Available Actions  
 **URL:** `/api/actions/`  
@@ -204,7 +239,7 @@ celery -A dms.celery_app beat --loglevel=info
 ]
 ```
 
----
+
 
 ### Test a Webhook  
 **URL:** `/api/webhook-test/`  
@@ -219,7 +254,7 @@ celery -A dms.celery_app beat --loglevel=info
 }
 ```
 
----
+
 
 ### Switch Stats Summary  
 **URL:** `/api/my-status/`  
@@ -233,7 +268,7 @@ celery -A dms.celery_app beat --loglevel=info
 }
 ```
 
----
+
 
 ## Scheduled Trigger Logic (via Celery)
 A periodic background task runs every hour/day to:
@@ -242,11 +277,11 @@ A periodic background task runs every hour/day to:
 - Trigger their assigned action
 - Mark the switch as `triggered`
 
----
+
 
 ## Permissions
 - Users can only view/edit their own switches.
 - Triggered switches become locked from updates.
 - Auth required for all switch-related actions.
 
----
+

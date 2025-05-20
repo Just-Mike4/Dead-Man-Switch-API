@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from user.views import RegisterationViewSet, LoginViewSet
+from user.views import RegisterationViewSet, LoginViewSet,PasswordResetView,PasswordResetConfirmView
 from switch.views import SwitchViewSet, ActionViewSet, webhook_test,UserStatusView
 
 router= DefaultRouter()
@@ -32,5 +32,6 @@ urlpatterns = [
     path("api/", include(router.urls)),
     path('api/webhook-test/', webhook_test),
     path('api/my-status/', UserStatusView.as_view()),
-    
+    path('api/password-reset/', PasswordResetView.as_view(), name='password-reset'),
+    path('api/password-reset-confirm/<uid>/<token>/', PasswordResetConfirmView.as_view(), name='password-reset-confirm'),
 ]
